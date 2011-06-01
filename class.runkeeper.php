@@ -18,7 +18,7 @@ class Runkeeper extends HTTP {
     $this->email = $email;
     $this->password = $password;
     $this->username = $username;
-    //$this->webbot = 'Unofficial Runkeeper API - https://github.com/phpfunk/Unofficial-Runkeeper-API';
+    $this->webbot = 'Unofficial Runkeeper API - https://github.com/phpfunk/Unofficial-Runkeeper-API';
     $this->cookie_file = 'cookies/runkeeper-api.txt';
     $this->keep_log = $keep_log;
     $this->reset_feeds();
@@ -182,6 +182,7 @@ class Runkeeper extends HTTP {
   {
     $stats = $this->get('stats');
     $pace = NULL;
+    $total = 0;
     foreach ($stats as $date => $arr) {
       $use = TRUE;
       if (isset($this->args['distance'])) {
@@ -195,6 +196,7 @@ class Runkeeper extends HTTP {
       }
       
       if ($use === TRUE) {
+        $total += 1;
         if ($this->args['return'] == 'best') {
           $this->log_write('Evaluating best pace...');
           $this->log_write('Pace: ' . $pace);
@@ -206,9 +208,21 @@ class Runkeeper extends HTTP {
         else {
           //Average
           $this->log_write('Calculating average pace...');
+          $tmp = explode(':', $arr['pace']);
+          $pace += $tmp[0] + ($tmp[1] / 60);
+          $this->log_write('This Time: ' . $arr['pace']);
+          $this->log_write('Total Time: ' . $pace);
         }
       }
     }
+    
+    if ($this->args['return'] == 'average') {
+      $pace = $pace / $total;
+      $tmp = explode('.', $pace);
+      $pace = $tmp[0] . ':' . number_format(($pace - $tmp[0]) * 60, 0, '', '');
+      $this->log_write('Average Time: ' . $pace . ' out of ' . $total . ' activities.');
+    }
+    
     return $pace;
     
   }

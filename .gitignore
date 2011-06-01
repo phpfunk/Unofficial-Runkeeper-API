@@ -1,2 +1,4 @@
 index.php
 runkeeper-api.txt
+*.log
+!20110531.log
