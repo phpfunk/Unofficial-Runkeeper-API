@@ -81,6 +81,40 @@ class Runkeeper extends HTTP {
     $this->log_end();
   }
   
+  protected function calories()
+  {
+    $stats = $this->get('stats');
+    
+    $this->log_start();
+    $this->log_write('Getting calories you skinny mofo...');
+    $total = 0;
+    $calories = 0;
+    $average = (isset($this->args['return']) && $this->args['return'] == 'average');
+    foreach ($stats as $date => $arr) {
+      $use = (isset($this->args['distance'])) ? $this->use_distance($this->args['distance'], $arr['distance']) : TRUE;
+      if ($use === TRUE) {
+        $total += 1;
+        $this->log_write('Use stat: Yes');
+        $this->log_write('Finding total calories...');
+        $calories += $arr['calories'];
+        $this->log_write('Current Calories: ' . $arr['calories']);
+        $this->log_write('Total Calories: ' . $calories);
+        $this->log_write('------------------------------');
+      }
+    }
+    
+    if ($average === TRUE) {
+      $calories = number_format($calories / $total, 2, '.', '');
+      $this->log_write('Average Calories Burned: ' . $calories . ' out of ' . $total . ' activities.');
+    }
+    else {
+      $this->log_write('Total Calories Burned: ' . $calories . ' out of ' . $total . ' activities.');
+    }
+    
+    $this->log_end();
+    return $calories;
+  }
+  
   protected function check_errors()
   {
     if ($this->errors()) {
@@ -181,23 +215,25 @@ class Runkeeper extends HTTP {
   protected function pace()
   {
     $stats = $this->get('stats');
+    $this->log_start();
+    $this->log_write('Start pacing yourself...');
     $pace = NULL;
     $total = 0;
+    $average = (isset($this->args['return']) && $this->args['return'] == 'average');
     foreach ($stats as $date => $arr) {
-      $use = TRUE;
-      if (isset($this->args['distance'])) {
-        $this->log_start();
-        $this->log_write('Checking distance...');
-        $this->log_write('EQ: ' . $this->args['distance']);
-        $this->log_write('Distance: ' . $arr['distance']);
-        $use = $this->use_distance($this->args['distance'], $arr['distance']);
-        $this->log_write('Use Stat: ' . $use);
-        $this->log_end();
-      }
-      
+      $use = (isset($this->args['distance'])) ? $this->use_distance($this->args['distance'], $arr['distance']) : TRUE;
       if ($use === TRUE) {
         $total += 1;
-        if ($this->args['return'] == 'best') {
+        $this->log_write('Use stat: Yes');
+        if ($average === TRUE) {
+          $this->log_write('Calculating average pace...');
+          $tmp = explode(':', $arr['pace']);
+          $pace += $tmp[0] + ($tmp[1] / 60);
+          $this->log_write('This Time: ' . $arr['pace']);
+          $this->log_write('Total Time: ' . $pace);
+        }
+        else {
+          //Best Pace
           $this->log_write('Evaluating best pace...');
           $this->log_write('Pace: ' . $pace);
           $pace = (empty($pace)) ? $arr['pace'] : $pace;
@@ -205,51 +241,22 @@ class Runkeeper extends HTTP {
           $this->log_write('Current Pace: ' . $arr['pace']);
           $this->log_write('Best Pace: ' . $pace);
         }
-        else {
-          //Average
-          $this->log_write('Calculating average pace...');
-          $tmp = explode(':', $arr['pace']);
-          $pace += $tmp[0] + ($tmp[1] / 60);
-          $this->log_write('This Time: ' . $arr['pace']);
-          $this->log_write('Total Time: ' . $pace);
-        }
       }
     }
     
-    if ($this->args['return'] == 'average') {
+    if ($average === TRUE) {
       $pace = $pace / $total;
       $tmp = explode('.', $pace);
       $pace = $tmp[0] . ':' . number_format(($pace - $tmp[0]) * 60, 0, '', '');
-      $this->log_write('Average Time: ' . $pace . ' out of ' . $total . ' activities.');
-    }
-    
-    return $pace;
-    
-  }
-  
-  protected function use_distance($eq, $distance)
-  {
-    $variance = (isset($this->args['variance'])) ? $this->args['variance'] : 0;
-    $distance = round($distance, 2);
-    if (stristr($eq, '<=')) {
-      $eq = trim(str_replace('<=', '', $eq));
-      return $distance <= round(($eq + $variance), 2);
-    }
-    elseif (stristr($eq, '>=')) {
-      $eq = trim(str_replace('>=', '', $eq));
-      return $distance >= round(($eq + $variance), 2);
-    }
-    elseif (stristr($eq, '<')) {
-      $eq = trim(str_replace('<', '', $eq));
-      return $distance < round(($eq + $variance), 2);
-    }
-    elseif (stristr($eq, '>')) {
-      $eq = trim(str_replace('>', '', $eq));
-      return $distance > round(($eq + $variance), 2);
+      $this->log_write('Average Pace: ' . $pace . ' out of ' . $total . ' activities.');
     }
     else {
-      return round(($eq + $variance), 2) == $distance;
+      $this->log_write('Best Pace: ' . $pace . ' out of ' . $total . ' activities.');
     }
+    
+    $this->log_end();
+    return $pace;
+    
   }
   
   protected function parse_json($url, $date=NULL)
@@ -304,7 +311,10 @@ class Runkeeper extends HTTP {
       $this->args['username'] = $str;
       unset($str);
     }
-
+    
+    $this->log_start();
+    $this->log_write('Street team extraction starting...');
+    $this->log_write('Connecting to: http://runkeeper.com/user/' . $username . '/streetTeam');
 
     $username = (isset($this->args['username'])) ? $this->args['username'] : $this->username;
     $html = $this->connect('http://runkeeper.com/user/' . $username . '/streetTeam');
@@ -312,8 +322,6 @@ class Runkeeper extends HTTP {
     
     preg_match_all('~<div class="userInfoBox">.*?<a class="usernameLink" href="/user/(.*?)/profile">(.*?)</a>~is', $html, $m);
     
-    $this->log_start();
-    $this->log_write('Street team extraction starting...');
     if (count($m) > 0) {
       foreach ($m[1] as $key => $value) {
         $this->street_team[$value] = $m[2][$key];
@@ -324,6 +332,34 @@ class Runkeeper extends HTTP {
       $this->log_write('No street team found.');
     }
     $this->log_end();
+  }
+  
+  protected function use_distance($eq, $distance)
+  {
+    $variance = (isset($this->args['variance'])) ? $this->args['variance'] : 0;
+    $distance = round($distance, 2);
+    $this->log_write('Checking distance...');
+    $this->log_write('EQ: ' . $eq);
+    $this->log_write('Distance: ' . $distance);
+    if (stristr($eq, '<=')) {
+      $eq = trim(str_replace('<=', '', $eq));
+      return $distance <= round(($eq + $variance), 2);
+    }
+    elseif (stristr($eq, '>=')) {
+      $eq = trim(str_replace('>=', '', $eq));
+      return $distance >= round(($eq + $variance), 2);
+    }
+    elseif (stristr($eq, '<')) {
+      $eq = trim(str_replace('<', '', $eq));
+      return $distance < round(($eq + $variance), 2);
+    }
+    elseif (stristr($eq, '>')) {
+      $eq = trim(str_replace('>', '', $eq));
+      return $distance > round(($eq + $variance), 2);
+    }
+    else {
+      return round(($eq + $variance), 2) == $distance;
+    }
   }
 
 }
