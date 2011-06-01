@@ -3,7 +3,7 @@ include('class.http.php');
 class Runkeeper extends HTTP {
 
   public $email        = NULL;
-  public $keep_log     = FALSE;
+  public $keep_log     = TRUE;
   public $log_path     = 'logs/';
   public $password     = NULL;
   public $street_team  = array();
@@ -12,15 +12,16 @@ class Runkeeper extends HTTP {
   protected $args      = array();
   protected $feeds     = array();
 
-  public function __construct($email, $password, $username, $keep_log=FALSE)
+  public function __construct($email, $password, $username, $keep_log=TRUE)
   {
     parent::__construct();
     $this->email = $email;
     $this->password = $password;
     $this->username = $username;
-    $this->reset_feeds();
+    //$this->webbot = 'Unofficial Runkeeper API - https://github.com/phpfunk/Unofficial-Runkeeper-API';
     $this->cookie_file = 'cookies/runkeeper-api.txt';
     $this->keep_log = $keep_log;
+    $this->reset_feeds();
     $this->login();
   }
   
@@ -34,10 +35,13 @@ class Runkeeper extends HTTP {
   protected function activity()
   {
 
+    $this->log_start();
+    $this->log_write('Getting activities...');
     $username = (isset($this->args['username'])) ? $this->args['username'] : $this->username;
     $max_date = (isset($this->args['max_date'])) ? strtotime($this->args['max_date']) : strtotime(date('m/d/Y'));
     $min_date = (isset($this->args['min_date'])) ? strtotime($this->args['min_date']) : mktime(0,0,0, date('m'), 1, date('Y'));
     
+    $this->log_write('Connecting to: http://runkeeper.com/user/' . $username . '/activity/');
     $html = $this->connect('http://runkeeper.com/user/' . $username . '/activity/');
     $this->check_errors();
     
@@ -60,7 +64,6 @@ class Runkeeper extends HTTP {
       }
 
       if ($date <= $max_date && $date >= $min_date) {
-        $this->log_start();
         $this->log_write('Finding activity for ' . $username . '...');
         $this->log_write('Activity ID: ' . $activity_id);
         $this->log_write('Activity Date: ' . date('m/d/Y', $date));
@@ -71,11 +74,11 @@ class Runkeeper extends HTTP {
         $this->log_write('JSON URL: http://runkeeper.com//ajax/pointData?activityId=' . $activity_id);
         $this->log_write('GPX URL: http://runkeeper.com/download/activity?activityId=' . $activity_id . '&downloadType=gpx');
         $this->log_end();
-          
         $this->feeds['json'][$date] = 'http://runkeeper.com//ajax/pointData?activityId=' . $activity_id;
         $this->feeds['gpx'][$date] = 'http://runkeeper.com/download/activity?activityId=' . $activity_id . '&downloadType=gpx';
       }
     }
+    $this->log_end();
   }
   
   protected function check_errors()
@@ -140,6 +143,8 @@ class Runkeeper extends HTTP {
   
   public function login($email=NULL, $password=NULL)
   {
+    $this->log_start();
+    $this->log_write('Logging in...');
     $this->email    = (! empty($email)) ? $email : $this->email;
     $this->password = (! empty($password)) ? $password : $this->password;
     $this->query = array(
@@ -148,11 +153,10 @@ class Runkeeper extends HTTP {
       '_eventName'  =>  'login'
     );
     
+    $this->log_write('Connecting to: http://runkeeper.com/login (POST)');
     $html = $this->connect('http://runkeeper.com/login', 'POST');
     $this->check_errors();
     
-    $this->log_start();
-    $this->log_write('Logging In ::');
     if (stristr($html, 'following errors:')) {
       $this->log_write('There were errors with the provided credentials. Please try again.');
       $this->log_end();
@@ -192,12 +196,16 @@ class Runkeeper extends HTTP {
       
       if ($use === TRUE) {
         if ($this->args['return'] == 'best') {
+          $this->log_write('Evaluating best pace...');
+          $this->log_write('Pace: ' . $pace);
           $pace = (empty($pace)) ? $arr['pace'] : $pace;
           $pace = (str_replace(':', '.', $arr['pace']) < str_replace(':', '.', $pace)) ? $arr['pace'] : $pace;
+          $this->log_write('Current Pace: ' . $arr['pace']);
+          $this->log_write('Best Pace: ' . $pace);
         }
         else {
           //Average
-          
+          $this->log_write('Calculating average pace...');
         }
       }
     }
@@ -232,7 +240,7 @@ class Runkeeper extends HTTP {
   
   protected function parse_json($url, $date=NULL)
   {
-    $json = json_decode($this->connect($url));
+    $json = json_decode($this->connect($url, 'POST'));
     $this->check_errors();
     if (! empty($date)) {
       $json->date = date('m/d/Y', $date);
@@ -253,6 +261,7 @@ class Runkeeper extends HTTP {
     $this->log_start();
     $this->log_write('Getting stats...');
     foreach ($this->feeds['json'] as $date => $url) {
+      $this->log_write('Connecting to: ' . $url);
       $json = $this->parse_json($url, $date);
       if ((isset($this->args['type']) && strtolower($this->args['type']) == strtolower($json->activityType)) || ! isset($this->args['type'])) {
         $stats[$date] = array();
@@ -264,6 +273,9 @@ class Runkeeper extends HTTP {
         $stats[$date]['elevation'] = $json->statsElevation;
         $stats[$date]['type'] = $json->activityType;
         $this->log_write('Activity Type: ' . $json->activityType . ' - Stats used.');
+      }
+      else {
+        $this->log_write('Activity Type: ' . $json->activityType . ' - Stats not used.');
       }
     }
     $this->log_end();

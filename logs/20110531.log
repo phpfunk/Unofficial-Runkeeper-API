@@ -1,11 +1,14 @@
-05/31/2011 17:46:10 PM
+05/31/2011 21:33:40 PM
 --------------------------------------------
-Logging In ::
+Logging in...
+Connecting to: http://runkeeper.com/login (POST)
 Login was successful.
 --------------------------------------------
 
-05/31/2011 17:46:11 PM
+05/31/2011 21:33:41 PM
 --------------------------------------------
+Getting activities...
+Connecting to: http://runkeeper.com/user/phpfunk/activity/
 Finding activity for phpfunk...
 Activity ID: 37486003
 Activity Date: 05/30/2011
@@ -17,8 +20,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=37486003
 GPX URL: http://runkeeper.com/download/activity?activityId=37486003&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:12 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 37368913
 Activity Date: 05/29/2011
@@ -30,8 +31,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=37368913
 GPX URL: http://runkeeper.com/download/activity?activityId=37368913&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:13 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 37192825
 Activity Date: 05/28/2011
@@ -43,8 +42,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=37192825
 GPX URL: http://runkeeper.com/download/activity?activityId=37192825&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:13 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 37041583
 Activity Date: 05/26/2011
@@ -56,8 +53,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=37041583
 GPX URL: http://runkeeper.com/download/activity?activityId=37041583&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:14 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 36929138
 Activity Date: 05/25/2011
@@ -69,8 +64,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=36929138
 GPX URL: http://runkeeper.com/download/activity?activityId=36929138&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:15 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 36791219
 Activity Date: 05/24/2011
@@ -82,8 +75,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=36791219
 GPX URL: http://runkeeper.com/download/activity?activityId=36791219&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:16 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 36521629
 Activity Date: 05/22/2011
@@ -95,8 +86,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=36521629
 GPX URL: http://runkeeper.com/download/activity?activityId=36521629&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:16 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 36520371
 Activity Date: 05/22/2011
@@ -108,8 +97,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=36520371
 GPX URL: http://runkeeper.com/download/activity?activityId=36520371&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:17 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 36357852
 Activity Date: 05/21/2011
@@ -121,8 +108,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=36357852
 GPX URL: http://runkeeper.com/download/activity?activityId=36357852&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:18 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35896642
 Activity Date: 05/17/2011
@@ -134,8 +119,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35896642
 GPX URL: http://runkeeper.com/download/activity?activityId=35896642&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:19 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35770523
 Activity Date: 05/16/2011
@@ -147,8 +130,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35770523
 GPX URL: http://runkeeper.com/download/activity?activityId=35770523&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:20 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35763235
 Activity Date: 05/16/2011
@@ -160,8 +141,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35763235
 GPX URL: http://runkeeper.com/download/activity?activityId=35763235&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:22 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35647478
 Activity Date: 05/15/2011
@@ -173,8 +152,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35647478
 GPX URL: http://runkeeper.com/download/activity?activityId=35647478&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:23 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35518689
 Activity Date: 05/14/2011
@@ -186,8 +163,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35518689
 GPX URL: http://runkeeper.com/download/activity?activityId=35518689&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:25 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35391869
 Activity Date: 05/13/2011
@@ -199,8 +174,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35391869
 GPX URL: http://runkeeper.com/download/activity?activityId=35391869&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:26 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 35118067
 Activity Date: 05/11/2011
@@ -212,8 +185,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=35118067
 GPX URL: http://runkeeper.com/download/activity?activityId=35118067&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:28 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 34880800
 Activity Date: 05/09/2011
@@ -225,8 +196,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=34880800
 GPX URL: http://runkeeper.com/download/activity?activityId=34880800&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:29 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 34368276
 Activity Date: 05/05/2011
@@ -238,8 +207,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=34368276
 GPX URL: http://runkeeper.com/download/activity?activityId=34368276&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:31 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 34239905
 Activity Date: 05/04/2011
@@ -251,8 +218,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=34239905
 GPX URL: http://runkeeper.com/download/activity?activityId=34239905&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:32 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 34114678
 Activity Date: 05/03/2011
@@ -264,8 +229,6 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=34114678
 GPX URL: http://runkeeper.com/download/activity?activityId=34114678&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:34 PM
---------------------------------------------
 Finding activity for phpfunk...
 Activity ID: 33820200
 Activity Date: 05/01/2011
@@ -277,28 +240,56 @@ JSON URL: http://runkeeper.com//ajax/pointData?activityId=33820200
 GPX URL: http://runkeeper.com/download/activity?activityId=33820200&downloadType=gpx
 --------------------------------------------
 
-05/31/2011 17:46:35 PM
+--------------------------------------------
+
+05/31/2011 21:33:59 PM
 --------------------------------------------
 Getting stats...
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=37486003
+Activity Type: WALK - Stats not used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=37368913
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=37192825
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=37041583
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=36929138
+Activity Type: WALK - Stats not used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=36791219
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=36521629
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=36520371
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=36357852
+Activity Type: WALK - Stats not used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35896642
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35770523
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35763235
+Activity Type: WALK - Stats not used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35647478
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35518689
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35391869
+Activity Type: WALK - Stats not used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=35118067
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=34880800
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=34368276
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=34239905
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=34114678
 Activity Type: RUN - Stats used.
+Connecting to: http://runkeeper.com//ajax/pointData?activityId=33820200
 Activity Type: RUN - Stats used.
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -306,23 +297,23 @@ Distance: 3.10
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
 Distance: 5.07
-Use Stat: 1
+Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
 Distance: 5.13
-Use Stat: 1
+Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -330,7 +321,7 @@ Distance: 6.05
 Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -338,7 +329,7 @@ Distance: 3.10
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -346,7 +337,7 @@ Distance: 3.10
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -354,7 +345,7 @@ Distance: 3.16
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -362,7 +353,7 @@ Distance: 6.36
 Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -370,7 +361,7 @@ Distance: 7.50
 Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -378,15 +369,15 @@ Distance: 3.16
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
 Distance: 5.07
-Use Stat: 1
+Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -394,7 +385,7 @@ Distance: 3.10
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -402,7 +393,7 @@ Distance: 3.10
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
@@ -410,15 +401,15 @@ Distance: 3.16
 Use Stat: 1
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
 Distance: 5.13
-Use Stat: 1
+Use Stat: 
 --------------------------------------------
 
-05/31/2011 17:46:43 PM
+05/31/2011 21:34:06 PM
 --------------------------------------------
 Checking distance...
 EQ: <=5
