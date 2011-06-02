@@ -214,7 +214,7 @@ class Runkeeper extends HTTP {
         $miles['longest'] = (! isset($miles['longest'])) ? $arr['distance'] : $miles['longest'];
         $miles['longest'] = ($arr['distance'] > $miles['longest']) ? $arr['distance'] : $miles['longest'];
         $miles['shortest'] = (! isset($miles['shortest'])) ? $arr['distance'] : $miles['shortest'];
-        $miles['shortest'] = ($arr['distance']< $miles['shortest']) ? $arr['distance'] : $miles['shortest'];
+        $miles['shortest'] = ($arr['distance'] < $miles['shortest']) ? $arr['distance'] : $miles['shortest'];
         $this->log_write('Activity: ' . $arr['distance'] . ' miles on ' . date('m/d/Y', $date));
         $this->log_write('Total Miles: ' . $miles['total']);
         $this->log_write('Use stat: Yes');
