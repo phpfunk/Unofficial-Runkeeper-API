@@ -83,34 +83,28 @@ class Runkeeper extends HTTP {
   
   protected function calories()
   {
-    $stats = $this->get('stats');
-    
+    $stats = $this->get('stats');  
     $this->log_start();
     $this->log_write('Getting calories you skinny mofo...');
-    $total = 0;
-    $calories = 0;
-    $average = (isset($this->args['return']) && $this->args['return'] == 'average');
+    $calories = array();
+    
+    $calories['activity'] = array();
     foreach ($stats as $date => $arr) {
       $use = (isset($this->args['distance'])) ? $this->use_distance($this->args['distance'], $arr['distance']) : TRUE;
       if ($use === TRUE) {
-        $total += 1;
+        $calories['activity'][$date] = array();
+        $calories['activity'][$date]['date'] = date('m/d/Y', $date);
+        $calories['activity'][$date]['calories'] = $arr['calories'];
+        $calories['total'] = (! isset($calories['total'])) ? $arr['calories'] : $calories['total'] + $arr['calories'];
+        $this->log_write('Calories Earned: ' . $arr['calories'] . ' calories on ' . date('m/d/Y', $date));
+        $this->log_write('Total Calories: ' . $calories['total']);
         $this->log_write('Use stat: Yes');
-        $this->log_write('Finding total calories...');
-        $calories += $arr['calories'];
-        $this->log_write('Current Calories: ' . $arr['calories']);
-        $this->log_write('Total Calories: ' . $calories);
         $this->log_write('------------------------------');
       }
     }
     
-    if ($average === TRUE) {
-      $calories = number_format($calories / $total, 2, '.', '');
-      $this->log_write('Average Calories Burned: ' . $calories . ' out of ' . $total . ' activities.');
-    }
-    else {
-      $this->log_write('Total Calories Burned: ' . $calories . ' out of ' . $total . ' activities.');
-    }
-    
+    $calories['average'] = number_format($calories['total'] / count($calories['activity']), 2, '.', '');
+    $this->log_write('Average Calories: ' . $calories['average'] . ' out of ' . count($calories['activity']) . ' activities.');   
     $this->log_end();
     return $calories;
   }
@@ -205,10 +199,31 @@ class Runkeeper extends HTTP {
   protected function miles()
   {
     $stats = $this->get('stats');
-    $miles = 0;
+    $this->log_start();
+    $this->log_write('Counting the miles...');
+    $miles = array();
+    
+    $miles['runs'] = array();
     foreach ($stats as $date => $arr) {
-      $miles += $arr['distance'];
+      $use = (isset($this->args['distance'])) ? $this->use_distance($this->args['distance'], $arr['distance']) : TRUE;
+      if ($use === TRUE) {
+        $miles['activity'][$date] = array();
+        $miles['activity'][$date]['date'] = date('m/d/Y', $date);
+        $miles['activity'][$date]['distance'] = $arr['distance'];
+        $miles['total'] = (! isset($miles['total'])) ? $arr['distance'] : $miles['total'] + $arr['distance'];
+        $miles['longest'] = (! isset($miles['longest'])) ? $arr['distance'] : $miles['longest'];
+        $miles['longest'] = ($arr['distance'] > $miles['longest']) ? $arr['distance'] : $miles['longest'];
+        $miles['shortest'] = (! isset($miles['shortest'])) ? $arr['distance'] : $miles['shortest'];
+        $miles['shortest'] = ($arr['distance']< $miles['shortest']) ? $arr['distance'] : $miles['shortest'];
+        $this->log_write('Activity: ' . $arr['distance'] . ' miles on ' . date('m/d/Y', $date));
+        $this->log_write('Total Miles: ' . $miles['total']);
+        $this->log_write('Use stat: Yes');
+        $this->log_write('------------------------------');
+      }
     }
+    
+    $miles['average'] = number_format($miles['total'] / count($miles['activity']), 2, '.', ',');
+    $this->log_end();
     return $miles;
   }
   
@@ -217,43 +232,32 @@ class Runkeeper extends HTTP {
     $stats = $this->get('stats');
     $this->log_start();
     $this->log_write('Start pacing yourself...');
-    $pace = NULL;
+    $pace = array();
     $total = 0;
-    $average = (isset($this->args['return']) && $this->args['return'] == 'average');
+    
+    $pace['activity'] = array();
     foreach ($stats as $date => $arr) {
       $use = (isset($this->args['distance'])) ? $this->use_distance($this->args['distance'], $arr['distance']) : TRUE;
       if ($use === TRUE) {
-        $total += 1;
+        $pace['activity'][$date] = array();
+        $pace['activity'][$date]['date'] = date('m/d/Y', $date);
+        $pace['activity'][$date]['pace'] = $arr['pace'];      
+        $pace['fastest'] = (! isset($pace['fastest'])) ? $arr['pace'] : $pace['fastest'];
+        $pace['fastest'] = (str_replace(':', '.', $arr['pace']) < str_replace(':', '.', $pace['fastest'])) ? $arr['pace'] : $pace['fastest'];
+        $pace['slowest'] = (! isset($pace['slowest'])) ? $arr['pace'] : $pace['slowest'];
+        $pace['slowest'] = (str_replace(':', '.', $arr['pace']) > str_replace(':', '.', $pace['slowest'])) ? $arr['pace'] : $pace['slowest'];
+        $tmp = explode(':', $arr['pace']);
+        $total += $tmp[0] + ($tmp[1] / 60);
+        $this->log_write('Pace: ' . $arr['pace'] . ' on ' . date('m/d/Y', $date));
         $this->log_write('Use stat: Yes');
-        if ($average === TRUE) {
-          $this->log_write('Calculating average pace...');
-          $tmp = explode(':', $arr['pace']);
-          $pace += $tmp[0] + ($tmp[1] / 60);
-          $this->log_write('This Time: ' . $arr['pace']);
-          $this->log_write('Total Time: ' . $pace);
-        }
-        else {
-          //Best Pace
-          $this->log_write('Evaluating best pace...');
-          $this->log_write('Pace: ' . $pace);
-          $pace = (empty($pace)) ? $arr['pace'] : $pace;
-          $pace = (str_replace(':', '.', $arr['pace']) < str_replace(':', '.', $pace)) ? $arr['pace'] : $pace;
-          $this->log_write('Current Pace: ' . $arr['pace']);
-          $this->log_write('Best Pace: ' . $pace);
-        }
+        $this->log_write('------------------------------');
       }
     }
     
-    if ($average === TRUE) {
-      $pace = $pace / $total;
-      $tmp = explode('.', $pace);
-      $pace = $tmp[0] . ':' . number_format(($pace - $tmp[0]) * 60, 0, '', '');
-      $this->log_write('Average Pace: ' . $pace . ' out of ' . $total . ' activities.');
-    }
-    else {
-      $this->log_write('Best Pace: ' . $pace . ' out of ' . $total . ' activities.');
-    }
-    
+    $average = $total / count($pace['activity']);
+    $tmp = explode('.', $average);
+    $pace['average'] = $tmp[0] . ':' . number_format(($average - $tmp[0]) * 60, 0, '', '');
+    $this->log_write('Average Pace: ' . $pace['average']);
     $this->log_end();
     return $pace;
     
@@ -273,6 +277,43 @@ class Runkeeper extends HTTP {
   {
     $this->feeds['json'] = array();
     $this->feeds['gpx']  = array();
+  }
+  
+  protected function return_val()
+  {
+    return (isset($this->args['return'])) ? strtolower($this->args['return']) : 'all';
+  }
+  
+  protected function speed()
+  {
+    $stats = $this->get('stats');
+    $this->log_start();
+    $this->log_write('You are lightning fast...');
+    $speed = array();
+    $total = 0;
+    
+    $speed['activity'] = array();
+    foreach ($stats as $date => $arr) {
+      $use = (isset($this->args['distance'])) ? $this->use_distance($this->args['distance'], $arr['distance']) : TRUE;
+      if ($use === TRUE) {
+        $total += $arr['speed'];
+        $speed['activity'][$date] = array();
+        $speed['activity'][$date]['date'] = date('m/d/Y', $date);
+        $speed['activity'][$date]['speed'] = $arr['speed'];      
+        $speed['fastest'] = (! isset($speed['fastest'])) ? $arr['speed'] : $speed['fastest'];
+        $speed['fastest'] = ($arr['speed'] > $speed['fastest']) ? $arr['speed'] : $speed['fastest'];
+        $speed['slowest'] = (! isset($speed['slowest'])) ? $arr['speed'] : $speed['slowest'];
+        $speed['slowest'] = ($arr['speed'] < $speed['slowest']) ? $arr['speed'] : $speed['slowest'];
+        $this->log_write('MPH: ' . $arr['speed'] . ' on ' . date('m/d/Y', $date));
+        $this->log_write('Use stat: Yes');
+        $this->log_write('------------------------------');
+      }
+    }
+  
+    $speed['average'] = number_format($total / count($speed['activity']), 2, '.', ',');
+    $this->log_write('Average Speed: ' . $speed['average']);
+    $this->log_end();
+    return $speed;
   }
   
   protected function stats()
