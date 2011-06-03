@@ -51,7 +51,13 @@ class Runkeeper extends HTTP {
     foreach ($m[2] as $activity_id) {
       $activity_html = $this->connect('http://runkeeper.com/user/' . $username . '/activity/' . $activity_id);
       preg_match_all('~<span class="secondary">(.*?)</span>~is', $activity_html, $am);
-      foreach ($am[1] as $date) $result
+      foreach ($am[1] as $date) {
+        $date = explode('-', $date);
+        $date = strtotime(trim(strip_tags($date[1])));
+        if (date('Y', $date) >= 2005) {
+          break;
+        }
+      }
         
       if ($date < $min_date) {
         break;
@@ -88,16 +94,15 @@ class Runkeeper extends HTTP {
         $result['activity'][$date]['date'] = date('m/d/Y', $date);
         $result['activity'][$date][$key] = $arr[$key];
         
-        //Calories / Miles
-        $result['total'] += $arr[$key];
-        
-        //Pace
-        $tmp = explode(':', $arr[$key]);
-        $result['total'] += $tmp[0] + ($tmp[1] / 60);
-        
+        if ($key == 'pace') {
+          $tmp = explode(':', $arr[$key]);
+          $result['total'] += $tmp[0] + ($tmp[1] / 60);
+        }
+        else {
+          $result['total'] += $arr[$key];
+        }
+
         $this->log_write($key . ': ' . $arr[$key] . ' on ' . date('m/d/Y', $date));
-        $this->log_write('Total: ' . $result['total']);
-        $this->log_write('Use stat: Yes');
         $this->log_write('------------------------------');
       }
     }
