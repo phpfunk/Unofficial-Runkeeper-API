@@ -259,6 +259,7 @@ class Runkeeper extends HTTP {
     $this->log_write('Finding ' . $type . ' ' . $key . '...');
     $result = NULL;
 
+    $o_type = $type;
     if ($key == 'pace' && $type == 'slowest') {
       $type = 'fastest';
     }
@@ -281,7 +282,7 @@ class Runkeeper extends HTTP {
       }
     }
     
-    $this->log_write($type . ' ' . $key . ' = ' . $result);
+    $this->log_write($o_type . ' ' . $key . ' = ' . $result);
     return $result;
   }
   
