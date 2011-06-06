@@ -134,7 +134,7 @@ class Runkeeper extends HTTP {
     $calories = $this->base_stats('calories');
     $calories['most'] = $this->single_stat($calories, 'calories', 'most');
     $calories['least'] = $this->single_stat($calories, 'calories', 'least');
-    $calories['average'] = number_format($calories['total'] / count($calories['activity']), 2, '.', '');
+    $calories['average'] = (count($calories['activity']) > 0) ? number_format($calories['total'] / count($calories['activity']), 2, '.', '') : 0;
     $this->log_write('Average Calories: ' . $calories['average'] . ' out of ' . count($calories['activity']) . ' activities.');   
     $this->log_end();
     $this->total_time();
@@ -269,7 +269,7 @@ class Runkeeper extends HTTP {
     $miles = $this->base_stats('distance');
     $miles['longest'] = $this->single_stat($miles, 'distance', 'longest');
     $miles['shortest'] = $this->single_stat($miles, 'distance', 'shortest');
-    $miles['average'] = number_format($miles['total'] / count($miles['activity']), 2, '.', ',');
+    $miles['average'] = (count($miles['activity']) > 0) ? number_format($miles['total'] / count($miles['activity']), 2, '.', ',') : 0;
     $this->log_end();
     $this->total_time();
     return $miles;
@@ -282,7 +282,7 @@ class Runkeeper extends HTTP {
     $pace = $this->base_stats('pace');
     $pace['fastest'] = str_replace('.', ':', $this->single_stat($pace, 'pace', 'fastest'));
     $pace['slowest'] = str_replace('.', ':', $this->single_stat($pace, 'pace', 'slowest'));
-    $average = $pace['total'] / count($pace['activity']);
+    $average = (count($pace['activity']) > 0) ? $pace['total'] / count($pace['activity']) : 0;
     unset($pace['total']);
     $tmp = explode('.', $average);
     $pace['average'] = $tmp[0] . ':' . number_format(($average - $tmp[0]) * 60, 0, '', '');
@@ -348,7 +348,7 @@ class Runkeeper extends HTTP {
     $speed = $this->base_stats('speed');
     $speed['fastest'] = $this->single_stat($speed, 'speed', 'fastest');
     $speed['slowest'] = $this->single_stat($speed, 'speed', 'slowest');
-    $speed['average'] = number_format($speed['total'] / count($speed['activity']), 2, '.', ',');
+    $speed['average'] = (count($speed['activity']) > 0) ? number_format($speed['total'] / count($speed['activity']), 2, '.', ',') : 0;
     unset($speed['total']);
     $this->log_write('Average Speed: ' . $speed['average']);
     $this->log_end();
