@@ -4,6 +4,7 @@ class Runkeeper extends HTTP {
 
   public $cache_path   = 'cache/';
   public $email        = NULL;
+  public $feeds        = array();
   public $keep_log     = TRUE;
   public $log_path     = 'logs/';
   public $password     = NULL;
@@ -13,7 +14,6 @@ class Runkeeper extends HTTP {
   public $username     = NULL;
   
   protected $args      = array();
-  protected $feeds     = array();
   protected $hash      = NULL;
   protected $no_hash   = array();
   protected $start     = 0;
@@ -176,7 +176,7 @@ class Runkeeper extends HTTP {
   
   public function get($action, $args=array())
   {
-    $create_hash = (! in_array($action, $this->no_hash));
+    $create_hash = ($action == 'stats');
     
     if ($create_hash === TRUE) {
       $this->start = $this->timer();

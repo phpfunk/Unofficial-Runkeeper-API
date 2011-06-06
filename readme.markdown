@@ -66,7 +66,7 @@ To use the API you must meet the requirements above.
     $street_team = $rk->get('street_team');
     
     
-### Extracting Calories, Pace, Miles and Speed
+### Extracting Calories, Pace, Miles, Speed and Stats
 
 For each of the above they are all called the same way. You use the get() method and submit the first argument as the action and an array of data for the second. That array of data can be used to narrow down the data returned.
 
@@ -276,6 +276,47 @@ Those are the keys you can submit for each method in the heading above. None of 
       'min_date'  => '06/01/2011'
     ));
     
+### Extract all stats
+
+    /**
+    Arguments
+    --------------
+    Action  (string) =  stats
+    Options (array)  =  see explanation above
+    
+    
+    Return
+    --------------
+    Array
+    (
+      [1307176800] => Array
+          (
+              [distance] => 8.19
+              [pace] => 8:33
+              [calories] => 931
+              [duration] => 1:10:00
+              [speed] => 7.02
+              [elevation] => 786
+              [type] => RUN
+          )
+      ...
+    )
+    
+    Cached
+    --------------
+    Yes
+    
+    Notes
+    --------------
+    Will also return average, fastest and slowest speed.
+    **/
+    
+    $speed = $rk->get('stats', array(
+      'type'      =>  'run',
+      'distance'  =>  '>=3.1',
+      'min_date'  => '06/01/2011'
+    ));
+    
 ### Get total miles in June for your entire street team
 
     $street_team = $rk->get('street_team');
@@ -294,3 +335,4 @@ Those are the keys you can submit for each method in the heading above. None of 
     RUNNER: Jason Jacobs (jason) ran 18.98 miles in June.
     RUNNER: Jeff Johns (phpfunk) ran 13.26 miles in June.
     RUNNER: Annie (asdiet) ran 3.1 miles in June.
+    **/
