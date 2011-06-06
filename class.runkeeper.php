@@ -2,25 +2,35 @@
 include('class.http.php');
 class Runkeeper extends HTTP {
 
+  public $cache_path   = 'cache/';
   public $email        = NULL;
   public $keep_log     = TRUE;
   public $log_path     = 'logs/';
   public $password     = NULL;
   public $street_team  = array();
+  public $total_time   = 0;
+  public $use_cache    = TRUE;
   public $username     = NULL;
   
   protected $args      = array();
   protected $feeds     = array();
+  protected $hash      = NULL;
+  protected $no_hash   = array();
+  protected $start     = 0;
 
-  public function __construct($email, $password, $username, $keep_log=TRUE)
+  public function __construct($email, $password, $username, $keep_log=TRUE, $use_cache=TRUE)
   {
     parent::__construct();
-    $this->email = $email;
-    $this->password = $password;
-    $this->username = $username;
-    $this->webbot = 'Unofficial Runkeeper API - https://github.com/phpfunk/Unofficial-Runkeeper-API';
-    $this->cookie_file = 'cookies/runkeeper-api.txt';
-    $this->keep_log = $keep_log;
+    
+    $this->email        = $email;
+    $this->password     = $password;
+    $this->username     = $username;
+    $this->webbot       = 'Unofficial Runkeeper API - https://github.com/phpfunk/Unofficial-Runkeeper-API';
+    $this->cookie_file  = 'cookies/runkeeper-api.txt';
+    $this->keep_log     = $keep_log;
+    $this->use_cache    = $use_cache;
+    $this->no_hash      = array('cache','stats','activity');
+    
     $this->reset_feeds();
     $this->login();
   }
@@ -44,7 +54,6 @@ class Runkeeper extends HTTP {
     $this->log_write('Connecting to: http://runkeeper.com/user/' . $username . '/activity/');
     $html = $this->connect('http://runkeeper.com/user/' . $username . '/activity/');
     $this->check_errors();
-    
     $this->reset_feeds();
     
     preg_match_all('~.*?link="(/user/' . $username . '/activity/(\d+))".*?~', $html, $m);
@@ -109,6 +118,15 @@ class Runkeeper extends HTTP {
     return $result;
   }
   
+  protected function cache()
+  {
+    $this->log_start();
+    $this->log_write('Finding cache file...');
+    $file = $this->cache_path . $this->hash . '.cache';
+    $this->log_end();
+    return (file_exists($file) && $this->use_cache === TRUE) ? unserialize(file_get_contents($file)) : FALSE;
+  }
+  
   protected function calories()
   { 
     $this->log_start();
@@ -119,6 +137,7 @@ class Runkeeper extends HTTP {
     $calories['average'] = number_format($calories['total'] / count($calories['activity']), 2, '.', '');
     $this->log_write('Average Calories: ' . $calories['average'] . ' out of ' . count($calories['activity']) . ' activities.');   
     $this->log_end();
+    $this->total_time();
     return $calories;
   }
   
@@ -135,12 +154,46 @@ class Runkeeper extends HTTP {
     }
   }
   
+  protected function create_hash($action)
+  {
+    $this->log_start();
+    $this->log_write('Creating hash key...');
+    $str = $action;
+    if (! is_array($this->args)) {
+      $str .= $this->args;
+    }
+    else {
+      foreach ($this->args as $k => $v) {
+        $str .= $k . $v;
+      }
+    }
+    $this->hash = md5($str);
+    $this->log_write('Hash String: ' . $str);
+    $this->log_write('Hash Key: ' . $this->hash);
+    $this->log_write('Action: ' . $action);
+    $this->log_end();
+  }
+  
   public function get($action, $args=array())
   {
+    $create_hash = (! in_array($action, $this->no_hash));
+    
+    if ($create_hash === TRUE) {
+      $this->start = $this->timer();
+    }
+    
     if (method_exists($this, $action)) {
       if (! is_array($args) || @count($args) > 0) {
         $this->args = $args;
       }
+      
+      if ($create_hash === TRUE) {
+        $this->create_hash($action);
+      }
+      else {
+        $this->log_write('Hash key skipped, action sent: ' . $action);
+      }
+      
       return $this->$action();
     }
     else {
@@ -218,6 +271,7 @@ class Runkeeper extends HTTP {
     $miles['shortest'] = $this->single_stat($miles, 'distance', 'shortest');
     $miles['average'] = number_format($miles['total'] / count($miles['activity']), 2, '.', ',');
     $this->log_end();
+    $this->total_time();
     return $miles;
   }
   
@@ -234,6 +288,7 @@ class Runkeeper extends HTTP {
     $pace['average'] = $tmp[0] . ':' . number_format(($average - $tmp[0]) * 60, 0, '', '');
     $this->log_write('Average Pace: ' . $pace['average']);
     $this->log_end();
+    $this->total_time();
     return $pace;
     
   }
@@ -297,32 +352,42 @@ class Runkeeper extends HTTP {
     unset($speed['total']);
     $this->log_write('Average Speed: ' . $speed['average']);
     $this->log_end();
+    $this->total_time();
     return $speed;
   }
   
   protected function stats()
   {
-    $this->get('activity');
-    $stats = array();
-    $this->log_start();
-    $this->log_write('Getting stats...');
-    foreach ($this->feeds['json'] as $date => $url) {
-      $this->log_write('Connecting to: ' . $url);
-      $json = $this->parse_json($url, $date);
-      if ((isset($this->args['type']) && strtolower($this->args['type']) == strtolower($json->activityType)) || ! isset($this->args['type'])) {
-        $stats[$date] = array();
-        $stats[$date]['distance'] = $json->statsDistance;
-        $stats[$date]['pace'] = $json->statsPace;
-        $stats[$date]['calories'] = $json->statsCalories;
-        $stats[$date]['duration'] = $json->statsDuration;
-        $stats[$date]['speed'] = $json->statsSpeed;
-        $stats[$date]['elevation'] = $json->statsElevation;
-        $stats[$date]['type'] = $json->activityType;
-        $this->log_write('Activity Type: ' . $json->activityType . ' - Stats used.');
-      }
-      else {
-        $this->log_write('Activity Type: ' . $json->activityType . ' - Stats not used.');
-      }
+    $stats = $this->get('cache');
+    if ($stats === FALSE) {
+  		$this->get('activity');
+  		$stats = array();
+  		$this->log_start();
+  		$this->log_write('Getting stats...');
+  		foreach ($this->feeds['json'] as $date => $url) {
+  			$this->log_write('Connecting to: ' . $url);
+  			$json = $this->parse_json($url, $date);
+  			if ((isset($this->args['type']) && strtolower($this->args['type']) == strtolower($json->activityType)) || ! isset($this->args['type'])) {
+  				$stats[$date] = array();
+  				$stats[$date]['distance'] = $json->statsDistance;
+  				$stats[$date]['pace'] = $json->statsPace;
+  				$stats[$date]['calories'] = $json->statsCalories;
+  				$stats[$date]['duration'] = $json->statsDuration;
+  				$stats[$date]['speed'] = $json->statsSpeed;
+  				$stats[$date]['elevation'] = $json->statsElevation;
+  				$stats[$date]['type'] = $json->activityType;
+  				$this->log_write('Activity Type: ' . $json->activityType . ' - Stats used.');
+  			}
+  			else {
+  				$this->log_write('Activity Type: ' . $json->activityType . ' - Stats not used.');
+  			}
+  		}
+  		$this->write_cache($stats);
+    }
+    else {
+      $this->log_start();
+  		$this->log_write('Getting stats from cache...');
+  		$this->log_write('File: ' . $this->cache_path . $this->hash . '.cache');
     }
     $this->log_end();
     return $stats;
@@ -337,11 +402,11 @@ class Runkeeper extends HTTP {
       unset($str);
     }
     
+    $username = (isset($this->args['username'])) ? $this->args['username'] : $this->username;
     $this->log_start();
     $this->log_write('Street team extraction starting...');
     $this->log_write('Connecting to: http://runkeeper.com/user/' . $username . '/streetTeam');
 
-    $username = (isset($this->args['username'])) ? $this->args['username'] : $this->username;
     $html = $this->connect('http://runkeeper.com/user/' . $username . '/streetTeam');
     $this->check_errors();
     
@@ -357,7 +422,26 @@ class Runkeeper extends HTTP {
       $this->log_write('No street team found.');
     }
     $this->log_end();
+    return $this->street_team;
   }
+  
+  protected function timer()
+	{
+    $this->log_start();
+    $this->log_write('Starting timer...');
+		list($msec, $sec) = explode(' ', microtime());
+		$this->log_end();
+		return ((float)$msec + (float)$sec);
+	}
+	
+	protected function total_time()
+	{
+    $this->log_start();
+		$timer = $this->start;
+		$this->total_time = number_format($this->timer() - $timer, 5, '.', '');
+		$this->log_write('Total execution time: ' . $this->total_time . ' seconds');
+		$this->log_end();
+	}
   
   protected function use_distance($eq, $distance)
   {
@@ -385,6 +469,25 @@ class Runkeeper extends HTTP {
     else {
       return round(($eq + $variance), 2) == $distance;
     }
+  }
+
+  protected function write_cache($stats)
+  {
+    $this->log_start();
+    $this->log_write('Writing cache file...');
+    $file = $this->cache_path . $this->hash . '.cache';
+    $fp = @fopen($file, 'w');
+    $return = @fwrite($fp, serialize($stats));
+    @fclose($fp);
+    
+    if ($return !== FALSE) {
+      $this->log_write('Stats successfully written to cache: ' . $this->cache_path . $this->hash . '.cache');
+    }
+    else {
+      $this->log_write('Could not write cache file, please check permission: ' . $this->cache_path);
+    }
+    
+    $this->log_end();
   }
 
 }
