@@ -308,10 +308,10 @@ Those are the keys you can submit for each method in the heading above. None of 
     
     Notes
     --------------
-    Will also return average, fastest and slowest speed.
+    Have fun.
     **/
     
-    $speed = $rk->get('stats', array(
+    $stats = $rk->get('stats', array(
       'type'      =>  'run',
       'distance'  =>  '>=3.1',
       'min_date'  => '06/01/2011'
@@ -336,3 +336,17 @@ Those are the keys you can submit for each method in the heading above. None of 
     RUNNER: Jeff Johns (phpfunk) ran 13.26 miles in June.
     RUNNER: Annie (asdiet) ran 3.1 miles in June.
     **/
+    
+### Get the raw data
+
+For every call the application goes out and grabs all the activity json URLs and extracts the data. If you want to use the raw data feeds, you can simply call the $rk->json variable and see all the data.
+
+    $stats = $rk->get('stats', array(
+      'type'      =>  'run',
+      'distance'  =>  '>=3.1',
+      'min_date'  => '06/01/2011'
+    ));
+
+    print '<pre>';
+    print_r($rk->json);
+    print '</pre>';

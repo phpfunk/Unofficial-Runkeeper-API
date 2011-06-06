@@ -4,7 +4,7 @@ class Runkeeper extends HTTP {
 
   public $cache_path   = 'cache/';
   public $email        = NULL;
-  public $feeds        = array();
+  public $json         = array();
   public $keep_log     = TRUE;
   public $log_path     = 'logs/';
   public $password     = NULL;
@@ -14,6 +14,7 @@ class Runkeeper extends HTTP {
   public $username     = NULL;
   
   protected $args      = array();
+  protected $feeds     = array();
   protected $hash      = NULL;
   protected $no_hash   = array();
   protected $start     = 0;
@@ -118,11 +119,12 @@ class Runkeeper extends HTTP {
     return $result;
   }
   
-  protected function cache()
+  protected function cache($json=FALSE)
   {
+    $json = ($json !== FALSE) ? '.json' : '';
     $this->log_start();
     $this->log_write('Finding cache file...');
-    $file = $this->cache_path . $this->hash . '.cache';
+    $file = $this->cache_path . $this->hash . $json . '.cache';
     $this->log_end();
     return (file_exists($file) && $this->use_cache === TRUE) ? unserialize(file_get_contents($file)) : FALSE;
   }
@@ -361,12 +363,14 @@ class Runkeeper extends HTTP {
     $stats = $this->get('cache');
     if ($stats === FALSE) {
   		$this->get('activity');
+  		$feeds = array();
   		$stats = array();
   		$this->log_start();
   		$this->log_write('Getting stats...');
   		foreach ($this->feeds['json'] as $date => $url) {
   			$this->log_write('Connecting to: ' . $url);
   			$json = $this->parse_json($url, $date);
+  			$this->json[$date] = $json;
   			if ((isset($this->args['type']) && strtolower($this->args['type']) == strtolower($json->activityType)) || ! isset($this->args['type'])) {
   				$stats[$date] = array();
   				$stats[$date]['distance'] = $json->statsDistance;
@@ -382,12 +386,19 @@ class Runkeeper extends HTTP {
   				$this->log_write('Activity Type: ' . $json->activityType . ' - Stats not used.');
   			}
   		}
+  		$this->write_cache($this->json, TRUE);
   		$this->write_cache($stats);
     }
     else {
+      $json = $this->get('cache', TRUE);
       $this->log_start();
   		$this->log_write('Getting stats from cache...');
   		$this->log_write('File: ' . $this->cache_path . $this->hash . '.cache');
+  		$this->log_write('Json File: ' . $this->cache_path . $this->hash . '.json.cache');
+  		
+  		foreach ($json as $date => $arr) {
+  		  $this->json[$date] = $arr;
+  		}
     }
     $this->log_end();
     return $stats;
@@ -471,17 +482,18 @@ class Runkeeper extends HTTP {
     }
   }
 
-  protected function write_cache($stats)
+  protected function write_cache($stats, $json=FALSE)
   {
     $this->log_start();
     $this->log_write('Writing cache file...');
-    $file = $this->cache_path . $this->hash . '.cache';
+    $json = ($json === TRUE) ? '.json' : '';
+    $file = $this->cache_path . $this->hash . $json . '.cache';
     $fp = @fopen($file, 'w');
     $return = @fwrite($fp, serialize($stats));
     @fclose($fp);
     
     if ($return !== FALSE) {
-      $this->log_write('Stats successfully written to cache: ' . $this->cache_path . $this->hash . '.cache');
+      $this->log_write('Stats successfully written to cache: ' . $this->cache_path . $this->hash . $json . '.cache');
     }
     else {
       $this->log_write('Could not write cache file, please check permission: ' . $this->cache_path);
